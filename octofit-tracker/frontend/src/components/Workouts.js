@@ -1,0 +1,48 @@
+
+import React, { useEffect, useState } from 'react';
+const endpoint = `https://${process.env.REACT_APP_CODESPACE_NAME}-8000.app.github.dev/api/workouts/`;
+
+function Workouts() {
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    console.log('Fetching from:', endpoint);
+    fetch(endpoint)
+      .then(res => res.json())
+      .then(json => {
+        const results = Array.isArray(json) ? json : json.results || [];
+        setData(results);
+        console.log('Fetched workouts:', results);
+      })
+      .catch(e => console.error('Error fetching workouts:', e));
+  }, []);
+  return (
+    <div className="card shadow-sm">
+      <div className="card-body">
+        <h2 className="card-title mb-4 text-danger">Workouts</h2>
+        <div className="table-responsive">
+          <table className="table table-striped table-hover align-middle">
+            <thead className="table-danger">
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Difficulty</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item, idx) => (
+                <tr key={item.id || idx}>
+                  <td>{idx + 1}</td>
+                  <td>{item.name}</td>
+                  <td>{item.description}</td>
+                  <td>{item.difficulty}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+export default Workouts;
